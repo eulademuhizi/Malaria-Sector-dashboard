@@ -75,9 +75,8 @@ def load_data():
         file_id = "14kwr57ZCNp6XCpaFcNhXMU7a5EStCmsK"
         url = f"https://drive.google.com/uc?id={file_id}"
 
-        st.info("Downloading sector_malaria.geojson from Google Drive...")
         output = "sector_malaria.geojson"
-        gdown.download(url, output, quiet=False)
+        gdown.download(url, output, quiet=True)
 
         # Load the GeoJSON file
         sector_data = gpd.read_file(output)
@@ -217,10 +216,10 @@ def create_top_sectors_chart(data, year, metric='Simple malaria cases', top_n=10
     
     if metric == 'Simple malaria cases':
         y_title = 'Simple Malaria Cases'
-        title = f'Top {top_n} Simple Malaria Cases - {year}'
+        title = f'Top 10 sectors with most cases - {year}'
     else:  # incidence
         y_title = 'Incidence'
-        title = f'Top {top_n} Malaria Incidence - {year}'
+        title = f'Top 10 sectors with highest incidence - {year}'
     
     # Pink to purple color scale
     pink_purple_scale = ['#fce4ec', '#f8bbd9', '#e91e63', '#ad1457', '#7b1fa2', '#4a148c']
@@ -254,14 +253,14 @@ def create_top_sectors_chart(data, year, metric='Simple malaria cases', top_n=10
         xaxis=dict(
             title_font_color='white',
             tickfont_color='white',
-            showgrid=True,
+            showgrid=False,
             gridcolor='rgba(255,255,255,0.2)'
         ),
         yaxis=dict(
             categoryorder='total ascending',
             title_font_color='white',
             tickfont_color='white',
-            showgrid=True,
+            showgrid=False,
             gridcolor='rgba(255,255,255,0.2)'
         ),
         coloraxis_colorbar=dict(
@@ -666,7 +665,7 @@ def create_province_scatterplot(data, year=2025):
 
 def main():
     # Title
-    st.title("Rwanda Malaria Sectors Dashboard")
+    st.title("Rwanda Malaria Districts Dashboard")
     
     # Load data
     data, sector_options = load_data()
@@ -711,10 +710,10 @@ def main():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("Total Simple Malaria Cases", f"{total_cases:,.0f}")
+        st.metric("Country malaria cases", f"{total_cases:,.0f}")
     
     with col2:
-        st.metric("Average Incidence", f"{overall_incidence:.2f}")
+        st.metric("Country incidence", f"{overall_incidence:.2f}")
     
     with col3:
         if change_percent is not None:
@@ -750,7 +749,6 @@ def main():
         st.plotly_chart(top_sectors_fig, use_container_width=True)
     
     # NEW LAYOUT: Two columns under the map
-    st.subheader("Sector Analysis Dashboard")
     col_left, col_right = st.columns([1, 1])
     
     with col_left:
